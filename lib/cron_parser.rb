@@ -76,6 +76,27 @@ class CronParser
     end
   end
 
+  def matches?(now = @time_source.now)
+    t = InternalTime.new(now, @time_source)
+
+    unless time_specs[:month][0].include?(t.month)
+      return false
+    end
+
+    unless interpolate_weekdays(t.year, t.month)[0].include?(t.day)
+      return false
+    end
+
+    unless time_specs[:hour][0].include?(t.hour)
+      return false
+    end
+
+    unless time_specs[:minute][0].include?(t.min)
+      return false
+    end
+
+    return true
+  end
 
   # returns the next occurence after the given date
   def next(now = @time_source.now, num = 1)
