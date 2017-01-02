@@ -71,6 +71,8 @@ class CronParser
       '0 0 * * *'
     when '@hourly'
       '0 * * * *'
+    when '@never'
+      '! * * * *'
     else
       spec
     end
@@ -160,7 +162,9 @@ class CronParser
   SUBELEMENT_REGEX = %r{^(\d+)(-(\d+)(/(\d+))?)?$}
   def parse_element(elem, allowed_range)
     values = elem.split(',').map do |subel|
-      if subel =~ /^\*/
+      if subel =~ /^\!/
+        []
+      elsif subel =~ /^\*/
         step = subel.length > 1 ? subel[2..-1].to_i : 1
         stepped_range(allowed_range, step)
       else
